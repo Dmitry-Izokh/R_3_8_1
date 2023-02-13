@@ -31,7 +31,7 @@ namespace R_3_8_1
         }
 
         // Методы
-        public Result OnExportIFC()
+        public void OnExportIFC()
         {
             UIApplication uiapp = _commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
@@ -54,9 +54,8 @@ namespace R_3_8_1
                     selectedFilePath = saveDialog.FileName;
                 }
                 if (string.IsNullOrEmpty(selectedFilePath))
-                    return Result.Cancelled;
-                doc.Export(selectedFilePath, "Экспорт.ifc", IfcOption);                
-                return Result.Succeeded;
+                    return;
+                doc.Export(selectedFilePath, "Экспорт.ifc", IfcOption);
                 ts.Commit();
             }
             RaiseCloseRequest();
@@ -72,8 +71,23 @@ namespace R_3_8_1
             {
 
                 ts.Start();
-                var nwcOption = new NavisworksExportOptions();
-                doc.Export(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "export.nvc", nwcOption);
+                var nwcOption = new NavisworksExportOptions();                               
+                var saveDialog = new System.Windows.Forms.SaveFileDialog
+                {
+                    OverwritePrompt = true,
+                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                    Filter = "All files (*.*)|*.*",
+                    FileName = "Export.nwc",
+                    DefaultExt = ".nwc"
+                };
+                string selectedFilePath = string.Empty;
+                if (saveDialog.ShowDialog() == DialogResult.OK)
+                {
+                    selectedFilePath = saveDialog.FileName;
+                }
+                if (string.IsNullOrEmpty(selectedFilePath))
+                    return;
+                doc.Export(selectedFilePath, "Экспорт.nwc", nwcOption);
                 ts.Commit();
 
             }
@@ -111,7 +125,23 @@ namespace R_3_8_1
                                                           // тот который мы отобрали с помощью FilteredElementCollectorю
                 };
                 // тут странный синтаксис со знаком ";"
+                var saveDialog = new System.Windows.Forms.SaveFileDialog
+                {
+                    OverwritePrompt = true,
+                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                    Filter = "All files (*.*)|*.*",
+                    FileName = "Export.png",
+                    DefaultExt = ".PNG"
+                };
+                string selectedFilePath = string.Empty;
+                if (saveDialog.ShowDialog() == DialogResult.OK)
+                {
+                    selectedFilePath = saveDialog.FileName;
+                }
+                if (string.IsNullOrEmpty(selectedFilePath))
+                    return;
                 doc.ExportImage(imageOption);
+                doc.Export(selectedFilePath, "Экспорт.nwc", imageOption);
                 ts.Commit();
 
             }
