@@ -111,20 +111,7 @@ namespace R_3_8_1
                                     .OfClass(typeof(ViewPlan))
                                     .Cast<ViewPlan>()
                                     .FirstOrDefault(v => v.ViewType == ViewType.FloorPlan && v.Name.Equals("Level 1"));
-                var imageOption = new ImageExportOptions
-                // Ниже описание настроек экспорта
-                {
-                    ZoomType = ZoomFitType.FitToPage, // размер изображения "вписать в лист"
-                    PixelSize = 2024, // Максимальное разрешение по одной из сторон 
-                    FilePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop), // Путь сохранения
-                    FitDirection = FitDirectionType.Horizontal, // Горизонтальная ориентация листа
-                    HLRandWFViewsFileType = ImageFileType.PNG, // Расширение экспортируемого файла (по умолчанию .jpeg)
-                    ShadowViewsFileType = ImageFileType.PNG, // Тоже тип расширения, но тут речь идет про теневые виды, что это?
-                    ImageResolution = ImageResolution.DPI_600, // Разрешение изображения в точках на дюйм
-                    ExportRange = ExportRange.CurrentView // тут речь о том какие виды пойдут на экспорт, в данном случае экспортируется только текущий вид,
-                                                          // тот который мы отобрали с помощью FilteredElementCollectorю
-                };
-                // тут странный синтаксис со знаком ";"
+
                 var saveDialog = new System.Windows.Forms.SaveFileDialog
                 {
                     OverwritePrompt = true,
@@ -140,8 +127,23 @@ namespace R_3_8_1
                 }
                 if (string.IsNullOrEmpty(selectedFilePath))
                     return;
-                doc.ExportImage(imageOption);
-                doc.Export(selectedFilePath, "Экспорт.nwc", imageOption);
+
+                var imageOption = new ImageExportOptions
+                // Ниже описание настроек экспорта
+                {
+                    ZoomType = ZoomFitType.FitToPage, // размер изображения "вписать в лист"
+                    PixelSize = 2024, // Максимальное разрешение по одной из сторон 
+                    FilePath = selectedFilePath, // Путь сохранения
+                    FitDirection = FitDirectionType.Horizontal, // Горизонтальная ориентация листа
+                    HLRandWFViewsFileType = ImageFileType.PNG, // Расширение экспортируемого файла (по умолчанию .jpeg)
+                    ShadowViewsFileType = ImageFileType.PNG, // Тоже тип расширения, но тут речь идет про теневые виды, что это?
+                    ImageResolution = ImageResolution.DPI_600, // Разрешение изображения в точках на дюйм
+                    ExportRange = ExportRange.CurrentView // тут речь о том какие виды пойдут на экспорт, в данном случае экспортируется только текущий вид,
+                                                          // тот который мы отобрали с помощью FilteredElementCollectorю
+                };
+                // тут странный синтаксис со знаком ";"
+                
+                doc.ExportImage(imageOption);                
                 ts.Commit();
 
             }
